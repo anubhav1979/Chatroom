@@ -15,7 +15,7 @@ const server = http.createServer(app);
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://your-app.vercel.app"
+  "https://chatroom-4d1r.vercel.app"
 ];
 
 app.use(cors({

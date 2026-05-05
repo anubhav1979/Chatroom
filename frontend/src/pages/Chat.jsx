@@ -18,8 +18,22 @@ export default function Chat() {
     })
   }, [])
 
+  // useEffect(() => {
+  //   const socket = getSocket()
+  //   socket.on('user_status', ({ userId, status }) => {
+  //     setOnlineUsers(prev => {
+  //       const next = new Set(prev)
+  //       if (status === 'online') next.add(userId)
+  //       else next.delete(userId)
+  //       return next
+  //     })
+  //   })
+  //   return () => socket.off('user_status')
+  // }, [])
+
   useEffect(() => {
     const socket = getSocket()
+
     socket.on('user_status', ({ userId, status }) => {
       setOnlineUsers(prev => {
         const next = new Set(prev)
@@ -28,8 +42,9 @@ export default function Chat() {
         return next
       })
     })
+
     return () => socket.off('user_status')
-  }, [])
+  }, [getSocket])
 
   function handleRoomCreated(room) {
     setRooms(prev => prev.find(r => r._id === room._id) ? prev : [...prev, room])

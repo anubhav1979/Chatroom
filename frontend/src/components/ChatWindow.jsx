@@ -26,35 +26,73 @@ export default function ChatWindow({ room, onlineUsers }) {
       .finally(() => setLoadingHistory(false))
   }, [room])
 
+  // useEffect(() => {
+  //   if (!room) return
+  //   const socket = getSocket()
+  //   socket.emit('join_room', { roomId: room._id })
+
+  //   function handleNewMessage(msg) {
+  //     if (msg.room !== room._id) return
+  //     setAiLoading(false)
+  //     setMessages(prev => prev.find(m => m._id === msg._id) ? prev : [...prev, msg])
+  //   }
+  //   function handleTyping({ username, roomId }) {
+  //     if (roomId !== room._id || username === user.username) return
+  //     setTypingUsers(prev => prev.includes(username) ? prev : [...prev, username])
+  //   }
+  //   function handleStopTyping({ roomId }) {
+  //     if (roomId !== room._id) return
+  //     setTypingUsers([])
+  //   }
+
+  //   socket.on('new_message', handleNewMessage)
+  //   socket.on('user_typing', handleTyping)
+  //   socket.on('user_stop_typing', handleStopTyping)
+
+  //   return () => {
+  //     socket.off('new_message', handleNewMessage)
+  //     socket.off('user_typing', handleTyping)
+  //     socket.off('user_stop_typing', handleStopTyping)
+  //   }
+  // }, [room])
+
+
   useEffect(() => {
-    if (!room) return
-    const socket = getSocket()
-    socket.emit('join_room', { roomId: room._id })
+  if (!room) return
 
-    function handleNewMessage(msg) {
-      if (msg.room !== room._id) return
-      setAiLoading(false)
-      setMessages(prev => prev.find(m => m._id === msg._id) ? prev : [...prev, msg])
-    }
-    function handleTyping({ username, roomId }) {
-      if (roomId !== room._id || username === user.username) return
-      setTypingUsers(prev => prev.includes(username) ? prev : [...prev, username])
-    }
-    function handleStopTyping({ roomId }) {
-      if (roomId !== room._id) return
-      setTypingUsers([])
-    }
+  const socket = getSocket()
+  socket.emit('join_room', { roomId: room._id })
 
-    socket.on('new_message', handleNewMessage)
-    socket.on('user_typing', handleTyping)
-    socket.on('user_stop_typing', handleStopTyping)
+  function handleNewMessage(msg) {
+    if (msg.room !== room._id) return
+    setAiLoading(false)
+    setMessages(prev =>
+      prev.find(m => m._id === msg._id) ? prev : [...prev, msg]
+    )
+  }
 
-    return () => {
-      socket.off('new_message', handleNewMessage)
-      socket.off('user_typing', handleTyping)
-      socket.off('user_stop_typing', handleStopTyping)
-    }
-  }, [room])
+  function handleTyping({ username, roomId }) {
+    if (roomId !== room._id || username === user.username) return
+    setTypingUsers(prev =>
+      prev.includes(username) ? prev : [...prev, username]
+    )
+  }
+
+  function handleStopTyping({ roomId }) {
+    if (roomId !== room._id) return
+    setTypingUsers([])
+  }
+
+  socket.on('new_message', handleNewMessage)
+  socket.on('user_typing', handleTyping)
+  socket.on('user_stop_typing', handleStopTyping)
+
+  return () => {
+    socket.off('new_message', handleNewMessage)
+    socket.off('user_typing', handleTyping)
+    socket.off('user_stop_typing', handleStopTyping)
+  }
+}, [room, getSocket, user.username])
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })

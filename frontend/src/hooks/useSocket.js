@@ -6,7 +6,7 @@ export function useSocket() {
   function getSocket() {
     if (!socketInstance) {
       const token = localStorage.getItem('token')
-      socketInstance = io('http://localhost:5000', {
+      socketInstance = io(process.env.REACT_APP_API_URL, {
         auth: { token },
         transports: ['websocket']
       })
